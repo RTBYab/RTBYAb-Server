@@ -16,8 +16,8 @@ const {
   getScore,
   scoreIncreasment,
   powerToAct
-} = require("../controllers/user");
-const { requireSignin } = require("../controllers/auth");
+} = require("../../controllers/user");
+const { requireSignin } = require("../../controllers/auth");
 
 const router = express.Router();
 

@@ -17,10 +17,10 @@ const {
   powerToAct,
   updateComment
   // findPosts
-} = require("../controllers/post");
-const { requireSignin } = require("../controllers/auth");
-const { userById } = require("../controllers/user");
-const { createPostValidator } = require("../helpers/validator");
+} = require("../../controllers/post.js");
+const { requireSignin } = require("../../controllers/auth");
+const { userById } = require("../../controllers/user");
+const { createPostValidator } = require("../../helpers/validator");
 
 const router = express.Router();
 
