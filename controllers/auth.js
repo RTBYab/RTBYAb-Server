@@ -43,7 +43,7 @@ exports.signin = async (req, res) => {
       process.env.JWT_SECRET
     );
     // persist the token as 't' in cookie with expiry date
-    res.cookie("t", token, { expire: new Date() + 9999 });
+    // res.cookie("t", token, { expire: new Date() + 9999 });
     // retrun response with user and token to frontend client
     const { _id, name, email, role } = user;
     return res.json({ token, user: { _id, email, name, role } });
@@ -51,7 +51,7 @@ exports.signin = async (req, res) => {
 };
 
 exports.signout = (req, res) => {
-  res.clearCookie("t");
+  // res.clearCookie("t");
   return res.json({ message: "Signout success!" });
 };
 
@@ -158,7 +158,7 @@ exports.socialLogin = (req, res) => {
         { _id: user._id, iss: "NODEAPI" },
         process.env.JWT_SECRET
       );
-      res.cookie("t", token, { expire: new Date() + 9999 });
+      // res.cookie("t", token, { expire: new Date() + 9999 });
       // return response with user and token to frontend client
       const { _id, name, email } = user;
       return res.json({ token, user: { _id, name, email } });
@@ -173,7 +173,7 @@ exports.socialLogin = (req, res) => {
         { _id: user._id, iss: "NODEAPI" },
         process.env.JWT_SECRET
       );
-      res.cookie("t", token, { expire: new Date() + 9999 });
+      // res.cookie("t", token, { expire: new Date() + 9999 });
       // return response with user and token to frontend client
       const { _id, name, email } = user;
       return res.json({ token, user: { _id, name, email } });
