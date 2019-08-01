@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
-
 const { ObjectId } = mongoose.Schema;
-const Language = require("../helpers/Language");
 const slug = require("slugs");
 
 const storeSchema = new mongoose.Schema(

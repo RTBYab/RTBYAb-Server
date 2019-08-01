@@ -18,20 +18,41 @@ exports.craeteStore = async (req, res) => {
   res.json(store);
 };
 
-// Get Store By Id
-exports.findStore = async (req, res) => {
-  const store = await Store.findById(id);
-  if (!store) res.json({ message: Language.fa.NoStoreFound });
+// Update Store
+exports.updateStore = async (req, res) => {
+  const id = req.body.id;
+  const store = await Store.findByIdAndUpdate(id, req.body, {
+    new: true,
+    runValidators: true
+  });
+  if (!store)
+    return res.status(404).json({ message: Language.fa.NoStoreFound });
   res.json(store);
 };
 
+// Get Store By Id
+exports.findStore = async (req, res) => {
+  const store = await Store.findById(id);
+  if (!store) return res.json({ message: Language.fa.NoStoreFound });
+  res.json(store);
+};
+
+// HasAuth to Act
 exports.hasAuthorization = (req, res, next) => {
   let sameUser = req.profile && req.auth && req.profile._id == req.auth._id;
   let adminUser = req.profile && req.auth && req.auth.role === "admin";
+  let managerUser = req.profile && req.auth && req.auth.role === "manager";
 
-  const authorized = sameUser || adminUser;
+  const authorized = sameUser || adminUser || managerUser;
 
-  console.log("SAMEUSER", sameUser, "ADMINUSER", adminUser);
+  console.log(
+    "SAMEUSER",
+    sameUser,
+    "ADMINUSER",
+    adminUser,
+    "MANAGERUSER",
+    managerUser
+  );
 
   if (!authorized)
     return res.status(403).json({ error: Language.fa.UnAuthorized });

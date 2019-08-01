@@ -1,17 +1,30 @@
 const router = require("express").Router();
 
-const { craeteStore, hasAuthorization } = require("../../controllers/store");
+const {
+  craeteStore,
+  hasAuthorization,
+  updateStore
+} = require("../../controllers/store");
 const { requireSignin } = require("../../controllers/auth");
-const { powerToAct } = require("../../controllers/user");
+const { createStoreValidator } = require("../../helpers/validator");
 const { userById } = require("../../controllers/user");
 
-// createStore
+// Create Store
 router.post(
   "/store/createstore/:userId",
   requireSignin,
+  createStoreValidator,
   hasAuthorization,
-  // powerToAct,
   craeteStore
+);
+
+// Update Store
+router.put(
+  "/store/updatestore/:userId",
+  requireSignin,
+  createStoreValidator,
+  hasAuthorization,
+  updateStore
 );
 
 router.param("userId", userById);
