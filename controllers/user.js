@@ -18,6 +18,7 @@ exports.userById = async (req, res, next, id) => {
         });
       }
       req.profile = user; // adds profile object in req with user info
+      user.hashed_password = undefined;
       next();
     });
 };

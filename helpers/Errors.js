@@ -16,9 +16,9 @@ exports.unAuthorized = (err, req, res, next) => {
   next();
 };
 
-//  internal Server Error
+//  internal Server Error %00
 exports.internalError = (err, req, res, next) => {
-  if (err.name === "ServerError") winston.error(err.message, err);
+  if (err.code === 500) winston.error(err.message, err);
   res.status(500).json({ message: Language.fa.InternalErrorMessage });
   next();
 };

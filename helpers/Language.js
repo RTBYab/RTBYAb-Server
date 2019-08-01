@@ -13,7 +13,12 @@ exports.en = {
   CommentPostedSuccessfully: "Thanks for your commit",
   InternalErrorMessage: "InternalErrorMessage",
   DataBaseHasConnected: "Data-Base has connected",
-  NoSystemInfo: "No System info is available"
+  NoSystemInfo: "No System info is available",
+  MongooseStoreError: "The store name must between 2 to 222 words",
+  MongooseStoreDescriptionError:
+    "The description name must between 2 to 222 words",
+  NoStoreFound: "No Store found with that id :(",
+  StorecraetedBefore: "Store craeted Before please login"
 };
 
 exports.fa = {
@@ -31,5 +36,11 @@ exports.fa = {
   ReferalMessage: "با تشکر از ثبت نام شما ، امتیاز به معرف شما داده شد",
   InternalErrorMessage: "متاسفانه در برقراری ارتباط با سرور مشکلی پیش آمده است",
   DataBaseHasConnected: "با موفقیت به دیتا بیس وصل شدیم",
-  NoSystemInfo: "هیج اطاعاتی موجود است"
+  NoSystemInfo: "هیج اطاعاتی موجود است",
+  MongooseStoreError:
+    "نام کسب و کار حداقل باید ۲ حرف و حداکثر شامل ۲۲۲ حرف باشد",
+  MongooseStoreDescriptionError:
+    "توضیحات کسب و کار حداقل باید شامل ۲ و حداکثر ۱۲۰۰ کلمه باشد",
+  NoStoreFound: "هیچ فروشگاهی با این نام پیدا نشد",
+  StorecraetedBefore: "شما قبلا فروشگاه خود را ساخته اید لطفا لاگین کنید"
 };

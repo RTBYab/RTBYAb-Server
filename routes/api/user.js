@@ -1,4 +1,6 @@
 const express = require("express");
+const router = express.Router();
+
 const {
   userById,
   allUsers,
@@ -18,8 +20,6 @@ const {
   powerToAct
 } = require("../../controllers/user");
 const { requireSignin } = require("../../controllers/auth");
-
-const router = express.Router();
 
 // Following/Follower
 router.put(

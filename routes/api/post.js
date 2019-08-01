@@ -1,4 +1,5 @@
 const express = require("express");
+const router = express.Router();
 const {
   getPosts,
   createPost,
@@ -21,8 +22,6 @@ const {
 const { requireSignin } = require("../../controllers/auth");
 const { userById } = require("../../controllers/user");
 const { createPostValidator } = require("../../helpers/validator");
-
-const router = express.Router();
 
 router.get("/posts", getPosts);
 
