@@ -10,12 +10,17 @@ exports.singlePhotoUpload = multer(multerOptions).single("photo");
 
 // Photo Resizing
 exports.resizePhoto = async (req, res, next) => {
+  const store = await Store.findOne({ storeOwner: req.body.id });
+  if (store)
+    return res.status(400).json({ message: "شما قبلا ثبت نام کرده اید" });
+
   if (!req.file) return next();
+
   const extension = req.file.mimetype.split("/")[1];
   req.body.photo = `${uuid.v4()}.${extension}`;
   const photo = await jimp.read(req.file.buffer);
-  await photo.resize(800, jimp.AUTO);
-  await photo.write(`./public/uploads/storeImage/${req.body.photo}`);
+  await photo.resize(500, jimp.AUTO);
+  await photo.write(`./public/uploads/storeMainImage/${req.body.photo}`);
   next();
 };
 
@@ -73,7 +78,6 @@ exports.hasAuthorization = (req, res, next) => {
     "MANAGERUSER",
     managerUser
   );
-
   if (!authorized)
     return res.status(403).json({ error: Language.fa.UnAuthorized });
   next();
@@ -89,4 +93,21 @@ exports.powerToAct = (req, res, next) => {
   if (!powerToAct)
     return res.status(403).json({ message: Language.fa.UnAuthorized });
   next();
+};
+
+// Get Store ById
+exports.getStore = async (req, res) => {
+  const id = req.params.id;
+  const store = await Store.findById(id).select("-__v -slug");
+  if (!store)
+    return res.status(404).json({ message: Language.fa.NoStoreFound });
+  return res.json(store);
+};
+
+exports.getStoreByStoreOwner = async (req, res) => {
+  const id = req.params.id;
+  const store = await Store.findOne({ storeOwner: id }).select("-__v -slug");
+  if (!store)
+    return res.status(404).json({ message: Language.fa.NoStoreFound });
+  return res.json(store);
 };

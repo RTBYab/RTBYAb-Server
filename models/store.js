@@ -41,7 +41,7 @@ const storeSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    status: {
+    show: {
       type: Boolean,
       default: true
     },

@@ -9,28 +9,37 @@ const {
   hasAuthorization,
   updateStore,
   singlePhotoUpload,
-  resizePhoto
+  resizePhoto,
+  getStore,
+  getStoreByStoreOwner
 } = require("../../controllers/store");
 
 // Create Store
 router.post(
   "/store/createstore/:userId",
   singlePhotoUpload,
-  resizePhoto,
+  catchErrors(resizePhoto),
   requireSignin,
-  // createStoreValidator,
+  createStoreValidator,
   hasAuthorization,
-  craeteStore
+  catchErrors(craeteStore)
 );
 
 // Update Store
 router.put(
   "/store/updatestore/:userId",
+  singlePhotoUpload,
+  catchErrors(resizePhoto),
   requireSignin,
   createStoreValidator,
   hasAuthorization,
-  updateStore
+  catchErrors(updateStore)
 );
+
+// Get The Store By ID
+router.get("/store/:id", catchErrors(getStore));
+// Get The Store By ID
+router.get("/store/storeOwner/:id", catchErrors(getStoreByStoreOwner));
 
 router.param("userId", userById);
 

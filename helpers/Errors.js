@@ -9,8 +9,8 @@ exports.catchErrors = fn => {
 
 // 404 Error
 exports._404 = (req, res, next) => {
-  res.status(404).json({ error: Language.fa._404 });
-  next();
+  const err = res.status(404).json({ error: Language.fa._404 });
+  next(err);
 };
 
 // UnAuthorized Error

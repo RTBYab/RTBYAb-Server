@@ -40,7 +40,7 @@ exports.createStoreValidator = (req, res, next) => {
     min: 4,
     max: 138
   });
-  req.check("coordinates", "مختصات را روی نقشه انتخاب کنید").notEmpty();
+  // req.check("coordinates", "مختصات را روی نقشه انتخاب کنید").notEmpty();
   // req.check("coordinates", "آدرس دقیق خود را وارد کنید").isNumber();
 
   // check for errors
