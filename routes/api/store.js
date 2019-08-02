@@ -1,19 +1,24 @@
 const router = require("express").Router();
+const { catchErrors } = require("../../helpers/Errors");
+const { userById } = require("../../controllers/user");
+const { requireSignin } = require("../../controllers/auth");
+const { createStoreValidator } = require("../../helpers/validator");
 
 const {
   craeteStore,
   hasAuthorization,
-  updateStore
+  updateStore,
+  singlePhotoUpload,
+  resizePhoto
 } = require("../../controllers/store");
-const { requireSignin } = require("../../controllers/auth");
-const { createStoreValidator } = require("../../helpers/validator");
-const { userById } = require("../../controllers/user");
 
 // Create Store
 router.post(
   "/store/createstore/:userId",
+  singlePhotoUpload,
+  resizePhoto,
   requireSignin,
-  createStoreValidator,
+  // createStoreValidator,
   hasAuthorization,
   craeteStore
 );

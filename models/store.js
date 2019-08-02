@@ -32,8 +32,8 @@ const storeSchema = new mongoose.Schema(
       },
       coordinates: [
         {
-          type: Number,
-          required: true
+          type: Number
+          // required: true
         }
       ]
     },
@@ -41,6 +41,11 @@ const storeSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    status: {
+      type: Boolean,
+      default: true
+    },
+    photo: String,
     slug: String,
     tags: [String]
   },

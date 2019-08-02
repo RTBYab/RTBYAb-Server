@@ -18,7 +18,8 @@ exports.en = {
   MongooseStoreDescriptionError:
     "The description name must between 2 to 222 words",
   NoStoreFound: "No Store found with that id :(",
-  StorecraetedBefore: "Store craeted Before please login"
+  StorecraetedBefore: "Store craeted Before please login",
+  notProppeFileType: "It's not a photo, please send a photo instead"
 };
 
 exports.fa = {
@@ -42,5 +43,6 @@ exports.fa = {
   MongooseStoreDescriptionError:
     "توضیحات کسب و کار حداقل باید شامل ۲ و حداکثر ۱۲۰۰ کلمه باشد",
   NoStoreFound: "هیچ فروشگاهی با این نام پیدا نشد",
-  StorecraetedBefore: "شما قبلا فروشگاه خود را ساخته اید لطفا لاگین کنید"
+  StorecraetedBefore: "شما قبلا فروشگاه خود را ساخته اید لطفا لاگین کنید",
+  notProppeFileType: "فرمت این فایل قابل پذیرش نیست، لطفا عکس ارسال نمایید"
 };

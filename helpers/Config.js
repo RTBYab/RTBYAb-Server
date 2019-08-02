@@ -1,4 +1,6 @@
 const appRoot = require("app-root-path");
+const multer = require("multer");
+const Language = require("./Language.js");
 
 exports.folderOption = {
   level: "info", // Which level want to winston record !
@@ -18,4 +20,16 @@ exports.consoleOption = {
 
 exports.generalConfig = {
   envirement: "dev"
+};
+
+exports.multerOptions = {
+  storage: multer.memoryStorage(),
+  fileFilter(req, file, next) {
+    const isPhoto = file.mimetype.startsWith("image/");
+    if (isPhoto) {
+      next(null, true);
+    } else {
+      next({ message: Language.fa.notProppeFileType }, false);
+    }
+  }
 };

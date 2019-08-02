@@ -1,6 +1,12 @@
 const Language = require("./Language");
 const winston = require("winston");
 
+exports.catchErrors = fn => {
+  return function(req, res, next) {
+    return fn(req, res, next).catch(next);
+  };
+};
+
 // 404 Error
 exports._404 = (req, res, next) => {
   res.status(404).json({ error: Language.fa._404 });

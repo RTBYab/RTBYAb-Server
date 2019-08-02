@@ -1,7 +1,23 @@
-// const User = require("../models/user");
+const uuid = require("uuid");
+const jimp = require("jimp");
+const multer = require("multer");
 const Store = require("../models/store");
-const User = require("../models/user");
 const Language = require("../helpers/Language");
+const { multerOptions } = require("../helpers/Config");
+
+//Single Photo Upload Handler
+exports.singlePhotoUpload = multer(multerOptions).single("photo");
+
+// Photo Resizing
+exports.resizePhoto = async (req, res, next) => {
+  if (!req.file) return next();
+  const extension = req.file.mimetype.split("/")[1];
+  req.body.photo = `${uuid.v4()}.${extension}`;
+  const photo = await jimp.read(req.file.buffer);
+  await photo.resize(800, jimp.AUTO);
+  await photo.write(`./public/uploads/storeImage/${req.body.photo}`);
+  next();
+};
 
 // Create Store
 exports.craeteStore = async (req, res) => {

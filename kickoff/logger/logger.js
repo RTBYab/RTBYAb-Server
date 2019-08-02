@@ -5,11 +5,11 @@ process.on("uncaughtException", err => {
   winston.error("uncaughtException", {
     message: err.message,
     stack: err.stack
-  }); // logging with MetaData
-  process.exit(1); // exit with failure
+  });
+  process.exit(1);
 });
 
 process.on("unhandledRejection", err => {
   winston.error.exceptions.handle(err.message);
-  process.exit(1);
+  console.warn("unhandledRejection");
 });
