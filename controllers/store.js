@@ -5,6 +5,8 @@ const Language = require("../helpers/Language");
 
 // Create Store
 exports.craeteStore = async (req, res) => {
+  req.body.location.type = "Point";
+
   const id = req.params.userId;
 
   const storeExists = await Store.findOne({ storeOwner: id });
@@ -20,6 +22,8 @@ exports.craeteStore = async (req, res) => {
 
 // Update Store
 exports.updateStore = async (req, res) => {
+  req.body.location.type = "Point";
+  req.body.location.coordinates = [27, 23];
   const id = req.body.id;
   const store = await Store.findByIdAndUpdate(id, req.body, {
     new: true,

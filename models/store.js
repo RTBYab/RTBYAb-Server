@@ -25,6 +25,22 @@ const storeSchema = new mongoose.Schema(
       type: Date,
       default: Date.now
     },
+    location: {
+      type: {
+        type: String,
+        default: "Point"
+      },
+      coordinates: [
+        {
+          type: Number,
+          required: true
+        }
+      ]
+    },
+    address: {
+      type: String,
+      required: true
+    },
     slug: String,
     tags: [String]
   },

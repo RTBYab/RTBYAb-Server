@@ -35,6 +35,14 @@ exports.createStoreValidator = (req, res, next) => {
     min: 2,
     max: 1200
   });
+  req.check("address", "لطفا آدرس دقیق فروشگاه خود را وارد کنید").notEmpty();
+  req.check("address", "آدرس دقیق خود را وارد کنید").isLength({
+    min: 4,
+    max: 138
+  });
+  req.check("coordinates", "مختصات را روی نقشه انتخاب کنید").notEmpty();
+  // req.check("coordinates", "آدرس دقیق خود را وارد کنید").isNumber();
+
   // check for errors
   const errors = req.validationErrors();
   // if error show the first one as they happen
