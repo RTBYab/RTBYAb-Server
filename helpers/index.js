@@ -1,7 +1,7 @@
 const nodeMailer = require("nodemailer");
 const dotenv = require("dotenv");
 const winston = require("winston");
-const defaultEmailData = { from: "noreply@node-react.com" };
+const defaultEmailData = { from: "noreply@rtbyab.com" };
 
 dotenv.config();
 

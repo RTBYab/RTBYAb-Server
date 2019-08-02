@@ -1,9 +1,10 @@
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
+const Language = require("../helpers//Language");
+const { sendEmail } = require("../helpers");
 const expressJwt = require("express-jwt");
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 const _ = require("lodash");
-const { sendEmail } = require("../helpers");
+require("dotenv").config();
 
 exports.signup = async (req, res) => {
   const userExists = await User.findOne({ email: req.body.email });
@@ -60,33 +61,32 @@ exports.requireSignin = expressJwt({
   userProperty: "auth"
 });
 
-exports.forgotPassword = (req, res) => {
-  if (!req.body) return res.status(400).json({ message: "No request body" });
+exports.forgotPassword = async (req, res) => {
+  if (!req.body)
+    return res.status(400).json({ message: Language.fa.PleaseEnterAnEmail });
   if (!req.body.email)
-    return res.status(400).json({ message: "No Email in request body" });
+    return res.status(400).json({ message: Language.fa.PleaseEnterAnEmail });
 
-  console.log("forgot password finding user with that email");
   const { email } = req.body;
-  console.log("signin req.body", email);
-  // find the user based on email
-  User.findOne({ email }, (err, user) => {
-    // if err or no user
+
+  const founded = await User.findOne({ email }, (err, user) => {
     if (err || !user)
       return res.status("401").json({
-        error: "User with that email does not exist!"
+        error: { message: Language.fa.PasswordHasSent }
       });
 
-    // generate a token with user id and secret
     const token = jwt.sign(
-      { _id: user._id, iss: "NODEAPI" },
+      { _id: user._id, iss: "RTBYAB" },
       process.env.JWT_SECRET
     );
 
-    // email data
+    const time = Date.now() + 259200;
+    // founded.resetPasswordTime = time;
+
     const emailData = {
-      from: "noreply@node-react.com",
+      from: "noreply@rtbyab.com",
       to: email,
-      subject: "Password Reset Instructions",
+      subject: Language.fa.EmailSubject,
       text: `Please use the following link to reset your password: ${
         process.env.CLIENT_URL
       }/reset-password/${token}`,
@@ -95,54 +95,51 @@ exports.forgotPassword = (req, res) => {
       }/reset-password/${token}</p>`
     };
 
-    return user.updateOne({ resetPasswordLink: token }, (err, success) => {
-      if (err) {
-        return res.json({ message: err });
-      } else {
+    return user.updateOne(
+      { resetPasswordLink: token, resetPasswordTime: time },
+      (err, success) => {
+        if (err) return res.json({ message: err });
         sendEmail(emailData);
         return res.status(200).json({
           message: `Email has been sent to ${email}. Follow the instructions to reset your password.`
         });
       }
-    });
+    );
   });
 };
-
-// to allow user to reset password
-// first you will find the user in the database with user's resetPasswordLink
-// user model's resetPasswordLink's value must match the token
-// if the user's resetPasswordLink(token) matches the incoming req.body.resetPasswordLink(token)
-// then we got the right user
 
 exports.resetPassword = (req, res) => {
   const { resetPasswordLink, newPassword } = req.body;
 
-  User.findOne({ resetPasswordLink }, (err, user) => {
-    // if err or no user
-    if (err || !user)
-      return res.status("401").json({
-        error: "Invalid Link!"
-      });
-
-    const updatedFields = {
-      password: newPassword,
-      resetPasswordLink: ""
-    };
-
-    user = _.extend(user, updatedFields);
-    user.updated = Date.now();
-
-    user.save((err, result) => {
-      if (err) {
-        return res.status(400).json({
-          error: err
+  User.findOne(
+    { resetPasswordLink, resetPasswordTime: { $gt: Date.now() } },
+    (err, user) => {
+      if (err || !user)
+        return res.status("401").json({
+          error: "Invalid Link!"
         });
-      }
-      res.json({
-        message: `Great! Now you can login with your new password.`
+
+      const updatedFields = {
+        password: newPassword,
+        resetPasswordLink: "",
+        resetPasswordTime: ""
+      };
+
+      user = _.extend(user, updatedFields);
+      user.updated = Date.now();
+
+      user.save((err, result) => {
+        if (err) {
+          return res.status(400).json({
+            error: err
+          });
+        }
+        res.json({
+          message: `Great! Now you can login with your new password.`
+        });
       });
-    });
-  });
+    }
+  );
 };
 
 exports.socialLogin = (req, res) => {

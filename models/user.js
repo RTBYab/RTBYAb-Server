@@ -43,6 +43,7 @@ const userSchema = new mongoose.Schema(
       data: String,
       default: ""
     },
+    resetPasswordTime: Date,
     role: {
       type: String,
       default: "subscriber"
