@@ -16,10 +16,8 @@ const postSchema = new mongoose.Schema({
     minlength: 2,
     maxlength: 1200
   },
-  photo: {
-    data: Buffer,
-    contenType: String
-  },
+  photo: String,
+
   postedBy: {
     type: ObjectId,
     ref: "User"

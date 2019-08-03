@@ -79,9 +79,7 @@ exports.forgotPassword = async (req, res) => {
       { _id: user._id, iss: "RTBYAB" },
       process.env.JWT_SECRET
     );
-
     const time = Date.now() + 259200;
-    // founded.resetPasswordTime = time;
 
     const emailData = {
       from: "noreply@rtbyab.com",

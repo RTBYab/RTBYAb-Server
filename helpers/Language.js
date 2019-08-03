@@ -22,7 +22,8 @@ exports.en = {
   notProppeFileType: "It's not a photo, please send a photo instead",
   PleaseEnterAnEmail: "Please enter an email",
   PasswordHasSent:
-    "Password has sent to this email, please reset within 72 hours"
+    "Password has sent to this email, please reset within 72 hours",
+  CreateStoreBeforeMakeAPost: "Create a store before make any post"
 };
 
 exports.fa = {
@@ -51,5 +52,7 @@ exports.fa = {
   PleaseEnterAnEmail: "لطفا ایمل خود را وارد کنید",
   PasswordHasSent:
     "پسورد به ایمیل شما ارسال شد لطفا حداکثر تا ۷۲ ساعت نسبت به تغییر رمز خود اقدام نماید",
-  EmailSubject: "درخواست تغییر رمز"
+  EmailSubject: "درخواست تغییر رمز",
+  CreateStoreBeforeMakeAPost:
+    "لطفا قبل از ارسال پست اقدام به ساخت فروشگاه نمایید "
 };

@@ -1,6 +1,7 @@
 const uuid = require("uuid");
 const jimp = require("jimp");
 const multer = require("multer");
+const User = require("../models/user");
 const Store = require("../models/store");
 const Language = require("../helpers/Language");
 const { multerOptions } = require("../helpers/Config");
@@ -36,6 +37,16 @@ exports.craeteStore = async (req, res) => {
 
   const store = await new Store(req.body);
   store.storeOwner = req.profile;
+
+  await User.findByIdAndUpdate(
+    id,
+    {
+      $set: { role: "storeOwner" }
+    },
+    {
+      new: true
+    }
+  );
 
   store.save();
   res.json(store);

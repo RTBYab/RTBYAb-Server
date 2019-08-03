@@ -1,5 +1,11 @@
+const { singlePhotoUpload, resizePhoto } = require("../../controllers/store");
+const { createPostValidator } = require("../../helpers/validator");
+const { requireSignin } = require("../../controllers/auth");
+const { catchErrors } = require("../../helpers/Errors");
+const { userById } = require("../../controllers/user");
 const express = require("express");
 const router = express.Router();
+
 const {
   getPosts,
   createPost,
@@ -13,15 +19,14 @@ const {
   like,
   unlike,
   comment,
-  uncomment,
+  userRole,
   hasAuthorization,
   powerToAct,
   updateComment
   // findPosts
 } = require("../../controllers/post.js");
-const { requireSignin } = require("../../controllers/auth");
-const { userById } = require("../../controllers/user");
-const { createPostValidator } = require("../../helpers/validator");
+
+// Post Router has Begun :)
 
 router.get("/posts", getPosts);
 
@@ -35,15 +40,18 @@ router.post("/post/comment/:userId", requireSignin, powerToAct, comment);
 
 router.put("/post/updatecomment/:id", requireSignin, updateComment);
 
-// post routes
+// Craete Post
 router.post(
   "/post/new/:userId",
   requireSignin,
-  hasAuthorization,
-  createPost,
-  powerToAct,
-  createPostValidator
+  userRole,
+  // hasAuthorization,
+  singlePhotoUpload,
+  catchErrors(resizePhoto),
+  createPostValidator,
+  createPost
 );
+
 router.get("/posts/by/:userId", requireSignin, postsByUser);
 router.get("/post/:postId", singlePost);
 router.put("/post/:postId", requireSignin, isPoster, updatePost);

@@ -17,11 +17,11 @@ const {
 // Create Store
 router.post(
   "/store/createstore/:userId",
+  requireSignin,
+  hasAuthorization,
   singlePhotoUpload,
   catchErrors(resizePhoto),
-  requireSignin,
   createStoreValidator,
-  hasAuthorization,
   catchErrors(craeteStore)
 );
 

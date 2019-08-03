@@ -6,6 +6,7 @@ const _ = require("lodash");
 const Language = require("../helpers/Language");
 const cons = require("../helpers/Constants");
 
+
 exports.postById = (req, res, next, id) => {
   Post.findById(id)
     .populate("postedBy", "_id name")
@@ -50,29 +51,10 @@ exports.getPosts = async (req, res) => {
     .catch(err => console.log(err));
 };
 
-exports.createPost = (req, res, next) => {
-  let form = new formidable.IncomingForm();
-  form.keepExtensions = true;
-  form.parse(req, (err, fields, files) => {
-    if (err)
-      return res.status(400).json({ error: "Image could not be uploaded" });
-
-    let post = new Post(fields);
-
-    req.profile.hashed_password = undefined;
-    req.profile.salt = undefined;
-    post.postedBy = req.profile;
-
-    if (files.photo) {
-      post.photo.data = fs.readFile(files.photo.path);
-      post.photo.contentType = files.photo.type;
-    }
-    post.save((err, result) => {
-      if (err) return res.status(400).json({ error: err.mesage });
-
-      res.json(result);
-    });
-  });
+exports.createPost = async (req, res, next) => {
+  const post = await new Post(req.body);
+  post.save();
+  res.json(post);
 };
 
 exports.postsByUser = (req, res) => {
@@ -202,6 +184,14 @@ exports.hasAuthorization = (req, res, next) => {
 
   if (!authorized)
     return res.status(403).json({ error: Language.fa.UnAuthorized });
+  next();
+};
+
+// User Role
+exports.userRole = (req, res, next) => {
+  let user = req.auth;
+  if (user.role !== ("storeOwner" || "admin" || "manager"))
+    return res.json({ message: Language.fa.CreateStoreBeforeMakeAPost });
   next();
 };
 
