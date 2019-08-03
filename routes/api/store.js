@@ -1,7 +1,7 @@
 const { createStoreValidator } = require("../../helpers/validator");
 const { requireSignin } = require("../../controllers/auth");
-const { userById } = require("../../controllers/user");
 const { catchErrors } = require("../../helpers/Errors");
+const { userById } = require("../../controllers/user");
 const router = require("express").Router();
 
 const {
@@ -31,17 +31,16 @@ router.post(
 // Update Store
 router.put(
   "/store/updatestore/:userId",
+  requireSignin,
   singlePhotoUpload,
   catchErrors(resizePhoto),
-  requireSignin,
   createStoreValidator,
   hasAuthorization,
   catchErrors(updateStore)
 );
 
 // Search Store
-router.get("store/search", catchErrors(searchStore));
-
+router.get("/store/search", catchErrors(searchStore));
 // Get The Store By ID
 router.get("/store/:id", catchErrors(getStore));
 // Get The Store By ID

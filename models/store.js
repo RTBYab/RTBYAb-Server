@@ -55,7 +55,11 @@ const storeSchema = new mongoose.Schema(
       default: false
     }
   },
-  { timestamps: true }
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+    timestamps: true
+  }
 );
 
 // Index the Stores :)
@@ -65,6 +69,12 @@ storeSchema.index({
 });
 storeSchema.index({
   location: "2dsphere"
+});
+
+storeSchema.virtual("review", {
+  ref: "Review",
+  localField: "_id",
+  foreignField: "store"
 });
 
 storeSchema.pre("save", async function(next) {

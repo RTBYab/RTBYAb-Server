@@ -4,7 +4,7 @@ const jimp = require("jimp");
 const multer = require("multer");
 const User = require("../models/user");
 const expressJwt = require("express-jwt");
-const Store = require("../models/store");
+const Store = require("../models/Store");
 const Language = require("../helpers/Language");
 const { multerOptions } = require("../helpers/Config");
 
@@ -121,7 +121,9 @@ exports.powerToAct = (req, res, next) => {
 // Get Store ById
 exports.getStore = async (req, res) => {
   const id = req.params.id;
-  const store = await Store.findById(id).select("-__v -slug");
+  const store = await Store.findById(id)
+    .select("-__v -slug")
+    .populate("author review");
   if (!store)
     return res.status(404).json({ message: Language.fa.NoStoreFound });
   return res.json(store);
@@ -145,7 +147,6 @@ exports.searchStore = async (req, res) => {
         $search: req.body.query
       }
     },
-
     {
       score: { $meta: "textScore" }
     },
@@ -156,18 +157,15 @@ exports.searchStore = async (req, res) => {
             type: "point",
             coordinates
           },
-          $maxDistance: 12000
+          $maxDistance: 12000 //12Km
         }
       }
     }
-    // {
-    //   description: { $in: req.body.query }
-    // }
   )
     .sort({
       score: { $meta: "textScore" }
     })
-    .select("name decsription address location photo show private rate");
+    .select("name description address location photo show private rate");
   if (store.length === 0)
     return res.status(404).json({ message: Language.fa.NoStoreFound });
   res.json(store);

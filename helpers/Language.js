@@ -55,5 +55,6 @@ exports.fa = {
   EmailSubject: "درخواست تغییر رمز",
   CreateStoreBeforeMakeAPost:
     "لطفا قبل از ارسال پست اقدام به ساخت فروشگاه نمایید ",
-  StoreHasCreated: "فروشگاه با موفقیت ساخته شد "
+  StoreHasCreated: "فروشگاه با موفقیت ساخته شد ",
+  NoReviewFound: "هیچ نظری با این مشخصات یافت نشد"
 };
