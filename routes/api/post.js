@@ -1,4 +1,7 @@
-const { singlePhotoUpload, resizePhoto } = require("../../controllers/store");
+const {
+  singlePhotoUpload,
+  postResizePhoto
+} = require("../../controllers/store");
 const { createPostValidator } = require("../../helpers/validator");
 const { requireSignin } = require("../../controllers/auth");
 const { catchErrors } = require("../../helpers/Errors");
@@ -20,7 +23,6 @@ const {
   unlike,
   comment,
   userRole,
-  hasAuthorization,
   powerToAct,
   updateComment
   // findPosts
@@ -47,7 +49,7 @@ router.post(
   userRole,
   // hasAuthorization,
   singlePhotoUpload,
-  catchErrors(resizePhoto),
+  catchErrors(postResizePhoto),
   createPostValidator,
   createPost
 );

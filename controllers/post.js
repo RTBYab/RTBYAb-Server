@@ -6,7 +6,6 @@ const _ = require("lodash");
 const Language = require("../helpers/Language");
 const cons = require("../helpers/Constants");
 
-
 exports.postById = (req, res, next, id) => {
   Post.findById(id)
     .populate("postedBy", "_id name")

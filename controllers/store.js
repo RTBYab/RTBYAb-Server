@@ -122,3 +122,19 @@ exports.getStoreByStoreOwner = async (req, res) => {
     return res.status(404).json({ message: Language.fa.NoStoreFound });
   return res.json(store);
 };
+
+// for preventing multipart import
+// Post Single photo upload handler
+exports.postResizePhoto = async (req, res, next) => {
+  if (!req.file) return next();
+  const extension = req.file.mimetype.split("/")[1];
+  req.body.photo = `${uuid.v4()}.${extension}`;
+  const photo = await jimp.read(req.file.buffer);
+  await photo.resize(500, jimp.AUTO);
+  await photo.write(
+    `./public/uploads/postImages/${req.auth._id}/${new Date().toISOString()}/${
+      req.body.photo
+    }`
+  );
+  next();
+};
