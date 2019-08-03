@@ -9,13 +9,15 @@ const storeSchema = new mongoose.Schema(
       required: true,
       trim: true,
       minlength: 2,
-      maxlength: 222
+      maxlength: 222,
+      lowercase: true
     },
     description: {
       type: String,
       required: true,
       minlength: 2,
-      maxlength: 1200
+      maxlength: 1200,
+      lowercase: true
     },
     storeOwner: {
       type: ObjectId,
@@ -47,15 +49,26 @@ const storeSchema = new mongoose.Schema(
     },
     photo: String,
     slug: String,
-    tags: [String]
+    tags: [String],
+    private: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );
 
+// Index the Stores :)
+storeSchema.index({
+  name: "text",
+  description: "text"
+});
+storeSchema.index({
+  location: "2dsphere"
+});
+
 storeSchema.pre("save", async function(next) {
-  if (!this.isModified("name")) {
-    return next();
-  }
+  if (!this.isModified("name")) return next();
 
   this.slug = slug(this.name);
   const slugRegEx = new RegExp(`^(${this.slug})((-[0-9]*$)?)$`, "i");

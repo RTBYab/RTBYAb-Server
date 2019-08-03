@@ -1,8 +1,8 @@
-const router = require("express").Router();
-const { catchErrors } = require("../../helpers/Errors");
-const { userById } = require("../../controllers/user");
-const { requireSignin } = require("../../controllers/auth");
 const { createStoreValidator } = require("../../helpers/validator");
+const { requireSignin } = require("../../controllers/auth");
+const { userById } = require("../../controllers/user");
+const { catchErrors } = require("../../helpers/Errors");
+const router = require("express").Router();
 
 const {
   craeteStore,
@@ -11,7 +11,9 @@ const {
   singlePhotoUpload,
   resizePhoto,
   getStore,
-  getStoreByStoreOwner
+  getStoreByStoreOwner,
+  reGenerateToken,
+  searchStore
 } = require("../../controllers/store");
 
 // Create Store
@@ -22,7 +24,8 @@ router.post(
   singlePhotoUpload,
   catchErrors(resizePhoto),
   createStoreValidator,
-  catchErrors(craeteStore)
+  catchErrors(craeteStore),
+  reGenerateToken
 );
 
 // Update Store
@@ -35,6 +38,9 @@ router.put(
   hasAuthorization,
   catchErrors(updateStore)
 );
+
+// Search Store
+router.get("store/search", catchErrors(searchStore));
 
 // Get The Store By ID
 router.get("/store/:id", catchErrors(getStore));
