@@ -1,7 +1,9 @@
+require("dotenv").config();
 const uuid = require("uuid");
 const jimp = require("jimp");
 const multer = require("multer");
 const User = require("../models/user");
+const expressJwt = require("express-jwt");
 const Store = require("../models/store");
 const Language = require("../helpers/Language");
 const { multerOptions } = require("../helpers/Config");
@@ -21,7 +23,11 @@ exports.resizePhoto = async (req, res, next) => {
   req.body.photo = `${uuid.v4()}.${extension}`;
   const photo = await jimp.read(req.file.buffer);
   await photo.resize(500, jimp.AUTO);
-  await photo.write(`./public/uploads/storeMainImage/${req.body.photo}`);
+  await photo.write(
+    `./public/uploads/storeMainImage/${
+      req.auth._id
+    }/${new Date().toISOString()}/${req.body.photo}`
+  );
   next();
 };
 
@@ -38,7 +44,7 @@ exports.craeteStore = async (req, res) => {
   const store = await new Store(req.body);
   store.storeOwner = req.profile;
 
-  await User.findByIdAndUpdate(
+  const toStoreowner = await User.findByIdAndUpdate(
     id,
     {
       $set: { role: "storeOwner" }
@@ -49,8 +55,14 @@ exports.craeteStore = async (req, res) => {
   );
 
   store.save();
-  res.json(store);
+  res.json({ message: Language.fa.StoreHasCreated });
 };
+
+// Re-Generate Token
+exports.reGenerateToken = expressJwt({
+  secret: process.env.JWT_SECRET,
+  userProperty: "auth"
+});
 
 // Update Store
 exports.updateStore = async (req, res) => {
@@ -121,6 +133,44 @@ exports.getStoreByStoreOwner = async (req, res) => {
   if (!store)
     return res.status(404).json({ message: Language.fa.NoStoreFound });
   return res.json(store);
+};
+
+//searchStore
+exports.searchStore = async (req, res) => {
+  const coordinates = [req.body.lng, req.body.lat].map(parseFloat);
+
+  const store = await Store.find(
+    {
+      $text: {
+        $search: req.body.query
+      }
+    },
+
+    {
+      score: { $meta: "textScore" }
+    },
+    {
+      location: {
+        $near: {
+          $geometry: {
+            type: "point",
+            coordinates
+          },
+          $maxDistance: 12000
+        }
+      }
+    }
+    // {
+    //   description: { $in: req.body.query }
+    // }
+  )
+    .sort({
+      score: { $meta: "textScore" }
+    })
+    .select("name decsription address location photo show private rate");
+  if (store.length === 0)
+    return res.status(404).json({ message: Language.fa.NoStoreFound });
+  res.json(store);
 };
 
 // for preventing multipart import
