@@ -22,14 +22,14 @@ exports.postById = (req, res, next, id) => {
 };
 
 // with pagination
-exports.getPosts = async (req, res) => {
+exports.getPosts = (req, res) => {
   // get current page from req.query or use default value of 1
   const currentPage = req.query.page || 1;
   // return 3 posts per page
   const perPage = 6;
   let totalItems;
 
-  await Post.find()
+  Post.find()
     // countDocuments() gives you total count of posts
     .countDocuments()
     .then(count => {

@@ -27,8 +27,13 @@ exports.updateReview = async (req, res) => {
 };
 
 // Get Store's Review By Id :)
+
 exports.getStoreReview = async (req, res) => {
-  const review = await Review.find({ store: req.params.storeId });
+  // TODO: Add pagination
+  const review = await Review.find({ store: req.params.storeId })
+    // .skip(10)
+    .limit(5)
+    .sort({ created: -1 });
   if (!review)
     return res.status(404).json({ message: Language.fa.NoReviewFound });
   res.json(review);
@@ -43,6 +48,7 @@ exports.deleteReview = async (req, res) => {
   // res.json(req.params);
 };
 
+// Auth :)
 exports.hasAuthorization = (req, res, next) => {
   let sameUser = req.profile && req.auth && req.profile._id == req.auth._id;
   let adminUser = req.profile && req.auth && req.auth.role === "admin";

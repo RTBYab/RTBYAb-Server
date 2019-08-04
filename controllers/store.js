@@ -3,8 +3,8 @@ const uuid = require("uuid");
 const jimp = require("jimp");
 const multer = require("multer");
 const User = require("../models/user");
-const expressJwt = require("express-jwt");
 const Store = require("../models/Store");
+const expressJwt = require("express-jwt");
 const Language = require("../helpers/Language");
 const { multerOptions } = require("../helpers/Config");
 
