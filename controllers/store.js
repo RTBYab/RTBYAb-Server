@@ -138,36 +138,44 @@ exports.getStoreByStoreOwner = async (req, res) => {
 };
 
 //searchStore
+// exports.searchStore = async (req, res) => {
+//   const coordinates = [req.body.lng, req.body.lat].map(parseFloat);
+
+//   const store = await Store.find(
+//     {
+//       $text: {
+//         $search: req.body.query
+//       }
+//     },
+//     {
+//       score: { $meta: "textScore" }
+//     },
+//     {
+//       location: {
+//         $near: {
+//           $geometry: {
+//             type: "point",
+//             coordinates
+//           }
+//           // $maxDistance: 12000 //12Km
+//         }
+//       }
+//     }
+//   )
+//     .sort({
+//       score: { $meta: "textScore" }
+//     })
+//     .select("name description address location photo show private rate");
+//   if (store.length === 0)
+//     return res.status(404).json({ message: Language.fa.NoStoreFound });
+//   res.json(store);
+// };
+
 exports.searchStore = async (req, res) => {
   const coordinates = [req.body.lng, req.body.lat].map(parseFloat);
-
-  const store = await Store.find(
-    {
-      $text: {
-        $search: req.body.query
-      }
-    },
-    {
-      score: { $meta: "textScore" }
-    },
-    {
-      location: {
-        $near: {
-          $geometry: {
-            type: "point",
-            coordinates
-          },
-          $maxDistance: 12000 //12Km
-        }
-      }
-    }
-  )
-    .sort({
-      score: { $meta: "textScore" }
-    })
-    .select("name description address location photo show private rate");
-  if (store.length === 0)
-    return res.status(404).json({ message: Language.fa.NoStoreFound });
+  data = req.body.query;
+  console.log("coordinates", coordinates);
+  const store = await Store.getTopStores(data, coordinates);
   res.json(store);
 };
 
@@ -185,4 +193,14 @@ exports.postResizePhoto = async (req, res, next) => {
     }`
   );
   next();
+};
+
+// Delete Store
+exports.deleteStore = async (req, res) => {
+  id = req.params.id;
+  const store = await Store.findByIdAndRemove(id);
+  if (!store)
+    return res.status(404).json({ message: Language.fa.NoStoreFound });
+
+  res.json(store);
 };

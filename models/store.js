@@ -63,19 +63,52 @@ const storeSchema = new mongoose.Schema(
 );
 
 // Index the Stores :)
+
 storeSchema.index({
   name: "text",
   description: "text"
 });
-storeSchema.index({
-  location: "2dsphere"
-});
+
+storeSchema.index({ location: "2dsphere" });
 
 storeSchema.virtual("review", {
   ref: "Review",
   localField: "_id",
   foreignField: "store"
 });
+
+storeSchema.statics.getTopStores = function(data, coordinates) {
+  return this.aggregate([
+    // {
+    //   $geoNear: {
+    //     near: { type: "Point", coordinates },
+    //     key: "location",
+    //     distanceField: "dist.calculated"
+    //   }
+    // },
+    {
+      $match: { $text: { $search: data } }
+    },
+    {
+      $lookup: {
+        from: "review",
+        localField: "_id",
+        foreignField: "store",
+        as: "reviews"
+      }
+    },
+    {
+      $addFields: {
+        averageRating: { $avg: "$reviews.rating" },
+        score: { $meta: "textScore" }
+      }
+    },
+
+    { $sort: { averageRating: -1 } },
+
+    { $limit: 10 }
+  ]);
+};
 
 storeSchema.pre("save", async function(next) {
   if (!this.isModified("name")) return next();

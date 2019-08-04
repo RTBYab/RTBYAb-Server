@@ -10,7 +10,7 @@ exports.catchErrors = fn => {
 // 404 Error
 exports._404 = (req, res, next) => {
   // const err = new Error(Language.fa.NoStoreFound);
-  res.status(404).json({ message: Language.fa.NoStoreFound });
+  res.status(404).json(" message: Language.fa.NoStoreFound ");
   next();
 };
 

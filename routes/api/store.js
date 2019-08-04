@@ -13,7 +13,8 @@ const {
   getStore,
   getStoreByStoreOwner,
   reGenerateToken,
-  searchStore
+  searchStore,
+  deleteStore
 } = require("../../controllers/store");
 
 // Create Store
@@ -27,7 +28,8 @@ router.post(
   catchErrors(craeteStore),
   reGenerateToken
 );
-
+// Get The Store By ID
+router.get("/store/:id", catchErrors(getStore));
 // Update Store
 router.put(
   "/store/updatestore/:userId",
@@ -38,11 +40,16 @@ router.put(
   hasAuthorization,
   catchErrors(updateStore)
 );
-
 // Search Store
-router.get("/store/search", catchErrors(searchStore));
-// Get The Store By ID
-router.get("/store/:id", catchErrors(getStore));
+router.get("/stote/search", catchErrors(searchStore));
+// Delete Store
+router.delete(
+  "/store/:storeId",
+  requireSignin,
+  hasAuthorization,
+  catchErrors(deleteStore)
+);
+
 // Get The Store By ID
 router.get("/store/storeOwner/:id", catchErrors(getStoreByStoreOwner));
 
