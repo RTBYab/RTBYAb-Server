@@ -38,8 +38,11 @@ router.put(
 );
 
 router.get("/users", allUsers);
+// Get UserBY Id
 router.get("/user/:userId", requireSignin, getUser);
+// Update User
 router.put("/user/:userId", requireSignin, hasAuthorization, updateUser);
+// Delete User
 router.delete("/user/:userId", requireSignin, hasAuthorization, deleteUser);
 // photo
 router.get("/user/photo/:userId", userPhoto);

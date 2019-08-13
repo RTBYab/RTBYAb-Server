@@ -21,12 +21,8 @@ exports.signin = async (req, res) => {
   // find the user based on email
   const { email, password } = req.body;
   await User.findOne({ email }, (err, user) => {
-    if (user.isActive === false)
-      return res.json({
-        message: "please active your account first, then login!"
-      });
     // if err or no user
-    if (err || !user) {
+    if (err || !user || !user.isActive) {
       return res.status(401).json({
         error: "User with that email does not exist. Please signup."
       });

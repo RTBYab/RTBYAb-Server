@@ -25,7 +25,7 @@ exports.resizePhoto = async (req, res, next) => {
   await photo.resize(500, jimp.AUTO);
   await photo.write(
     `./public/uploads/storeMainImage/${
-      req.auth._id
+    req.auth._id
     }/${new Date().toISOString()}/${req.body.photo}`
   );
   next();
@@ -171,11 +171,40 @@ exports.getStoreByStoreOwner = async (req, res) => {
 //   res.json(store);
 // };
 
+// exports.searchStore = async (req, res) => {
+//   const coordinates = [req.body.lng, req.body.lat].map(parseFloat);
+//   data = req.body.query;
+//   console.log("coordinates", coordinates);
+//   const store = await Store.getTopStores(data, coordinates);
+
+//   res.json(store);
+// };
+
 exports.searchStore = async (req, res) => {
   const coordinates = [req.body.lng, req.body.lat].map(parseFloat);
-  data = req.body.query;
-  console.log("coordinates", coordinates);
-  const store = await Store.getTopStores(data, coordinates);
+  const store = await Store.find(
+    {
+      $text: {
+        $search: req.body.query
+      }
+    },
+    {
+      density: { $meta: "textScore" }
+    },
+    {
+      location: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates
+          },
+          maxDistance: 12000
+        }
+      }
+    }
+  )
+    .select("name description address location photo show private rate")
+    .populate("review ");
   res.json(store);
 };
 
@@ -189,7 +218,7 @@ exports.postResizePhoto = async (req, res, next) => {
   await photo.resize(500, jimp.AUTO);
   await photo.write(
     `./public/uploads/postImages/${req.auth._id}/${new Date().toISOString()}/${
-      req.body.photo
+    req.body.photo
     }`
   );
   next();

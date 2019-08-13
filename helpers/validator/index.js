@@ -85,6 +85,35 @@ exports.userSignupValidator = (req, res, next) => {
   next();
 };
 
+exports.userSigninValidator = (req, res, next) => {
+  // email is not null, valid and normalized
+  req
+    .check("email", "لطفا ادرس ایمیل خود را با دقت وارد نمایید")
+    .matches(/.+\@.+\..+/)
+    .withMessage("Email must contain @")
+    .isLength({
+      min: 4,
+      max: 2000
+    });
+  // check for password
+  req.check("password", "لطفا رمز عبور خود را با دقت وارد نمایید").notEmpty();
+  req
+    .check("password")
+    .isLength({ min: 6 })
+    .withMessage("لطفا رمز عبور خود را با دقت وارد نمایید")
+    .matches(/\d/)
+    .withMessage("لطفا رمز عبور خود را با دقت وارد نمایید");
+  // check for errors
+  const errors = req.validationErrors();
+  // if error show the first one as they happen
+  if (errors) {
+    const firstError = errors.map(error => error.msg)[0];
+    return res.status(400).json({ error: firstError });
+  }
+  // proceed to next middleware
+  next();
+};
+
 exports.passwordResetValidator = (req, res, next) => {
   // check for password
   req.check("newPassword", "Password is required").notEmpty();

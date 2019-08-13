@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 const doc = require("../../routes/doc");
 
 module.exports = app => {
+  app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
   app.use(expressValidator());
   app.use("/api", reviewRoutes);

@@ -79,13 +79,6 @@ storeSchema.virtual("review", {
 
 storeSchema.statics.getTopStores = function(data, coordinates) {
   return this.aggregate([
-    // {
-    //   $geoNear: {
-    //     near: { type: "Point", coordinates },
-    //     key: "location",
-    //     distanceField: "dist.calculated"
-    //   }
-    // },
     {
       $match: { $text: { $search: data } }
     },
