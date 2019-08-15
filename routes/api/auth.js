@@ -2,6 +2,7 @@ const {
   signup,
   signin,
   signout,
+  getById,
   forgotPassword,
   resetPassword,
   socialLogin
@@ -20,6 +21,10 @@ const { catchErrors } = require("../../helpers/Errors.js");
 
 router.post("/signup", userSignupValidator, catchErrors(signup));
 router.post("/signin", userSigninValidator, catchErrors(signin));
+
+// Get User By Id
+router.get("/cuser/:id", catchErrors(getById));
+
 router.get("/signout", signout);
 
 // password forgot and reset routes

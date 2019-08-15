@@ -36,7 +36,7 @@ exports.signin = async (req, res) => {
     }
     // generate a token with user id and secret
     const token = jwt.sign(
-      { _id: user._id, role: user.role },
+      { _id: user._id, role: user.role, iss: "RTBYAB", exp: 1200000000000 },
       process.env.JWT_SECRET
     );
     // persist the token as 't' in cookie with expiry date
@@ -45,6 +45,13 @@ exports.signin = async (req, res) => {
     const { _id, name, email, role } = user;
     return res.json({ token, user: { _id, email, name, role } });
   });
+};
+exports.getById = async (req, res) => {
+  const user = await User.findById(req.params.id).select(
+    "name email role report follower following store"
+  );
+  if (!user) res.status(404).json({ message: Language.fa.UserNotFound });
+  res.json(user);
 };
 
 exports.signout = (req, res) => {
