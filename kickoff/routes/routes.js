@@ -10,7 +10,9 @@ const doc = require("../../routes/doc");
 
 module.exports = app => {
   app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: true }));
   app.use(expressValidator());
+
   app.use("/api", reviewRoutes);
   app.use("/api", postRoutes);
   app.use("/api", authRoutes);

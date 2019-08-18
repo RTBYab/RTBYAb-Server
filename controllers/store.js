@@ -25,7 +25,7 @@ exports.resizePhoto = async (req, res, next) => {
   await photo.resize(500, jimp.AUTO);
   await photo.write(
     `./public/uploads/storeMainImage/${
-    req.auth._id
+      req.auth._id
     }/${new Date().toISOString()}/${req.body.photo}`
   );
   next();
@@ -218,7 +218,7 @@ exports.postResizePhoto = async (req, res, next) => {
   await photo.resize(500, jimp.AUTO);
   await photo.write(
     `./public/uploads/postImages/${req.auth._id}/${new Date().toISOString()}/${
-    req.body.photo
+      req.body.photo
     }`
   );
   next();
