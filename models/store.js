@@ -30,7 +30,7 @@ const storeSchema = new mongoose.Schema(
     location: {
       type: {
         type: String,
-        default: "Point"
+        enum: ["Point"]
       },
       coordinates: [
         {
@@ -40,8 +40,8 @@ const storeSchema = new mongoose.Schema(
       ]
     },
     address: {
-      type: String,
-      required: true
+      type: String
+      // required: true
     },
     show: {
       type: Boolean,
@@ -63,12 +63,12 @@ const storeSchema = new mongoose.Schema(
 );
 
 // Index the Stores :)
-
 storeSchema.index({
   name: "text",
   description: "text"
 });
 
+// Index Location(Long,Lat)
 storeSchema.index({ location: "2dsphere" });
 
 storeSchema.virtual("review", {

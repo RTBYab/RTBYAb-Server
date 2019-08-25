@@ -1,17 +1,18 @@
 {
   "name": "rtbyab",
   "version": "1.0.0",
-  "description": "RTBYab",
+  "description": "rtbYab",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
+    "start": "nodemon app.js",
+    "dev": "node app.js",
     "sample": "node ./data/load-sample-data.js",
     "deleteSample": "node ./data/load-sample-data.js --delete"
   },
   "keywords": [
     "node",
-    "api"
+    "api",
+    "rtb"
   ],
   "author": "DDS",
   "license": "ISC",

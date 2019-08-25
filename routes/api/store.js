@@ -8,9 +8,9 @@ const {
   getStoreByStoreOwner,
   reGenerateToken,
   searchStore,
-  deleteStore
+  deleteStore,
+  storeFinder
 } = require("../../controllers/store");
-const router = require("express").Router();
 const router = require("express").Router();
 const { userById } = require("../../controllers/user");
 const { catchErrors } = require("../../helpers/Errors");
@@ -24,9 +24,9 @@ router.post(
   hasAuthorization,
   singlePhotoUpload,
   catchErrors(resizePhoto),
-  createStoreValidator,
-  catchErrors(craeteStore),
-  reGenerateToken
+  // createStoreValidator,
+  catchErrors(craeteStore)
+  // reGenerateToken
 );
 // Get The Store By ID
 router.get("/store/:id", catchErrors(getStore));
@@ -41,7 +41,9 @@ router.put(
   catchErrors(updateStore)
 );
 // Search Store
-router.get("/stote/search", catchErrors(searchStore));
+router.get("/search", catchErrors(searchStore));
+router.get("/finder", catchErrors(storeFinder));
+
 // Delete Store
 router.delete(
   "/store/:storeId",

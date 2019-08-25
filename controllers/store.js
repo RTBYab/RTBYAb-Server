@@ -33,8 +33,7 @@ exports.resizePhoto = async (req, res, next) => {
 
 // Create Store
 exports.craeteStore = async (req, res) => {
-  req.body.location.type = "Point";
-
+  // req.body.location.type = "Point";
   const id = req.params.userId;
 
   const storeExists = await Store.findOne({ storeOwner: id });
@@ -44,7 +43,7 @@ exports.craeteStore = async (req, res) => {
   const store = await new Store(req.body);
   store.storeOwner = req.profile;
 
-  const toStoreowner = await User.findByIdAndUpdate(
+  await User.findByIdAndUpdate(
     id,
     {
       $set: { role: "storeOwner" }
@@ -182,6 +181,10 @@ exports.getStoreByStoreOwner = async (req, res) => {
 
 exports.searchStore = async (req, res) => {
   const coordinates = [req.body.lng, req.body.lat].map(parseFloat);
+
+  // const coordinates = [req.body.lng, req.body.lat].map(parseFloat);
+
+  console.log(req.body.lng, req.body.lat);
   const store = await Store.find(
     {
       $text: {
@@ -206,6 +209,10 @@ exports.searchStore = async (req, res) => {
     .select("name description address location photo show private rate")
     .populate("review ");
   res.json(store);
+};
+
+exports.storeFinder = async (req, res) => {
+  res.json("Hi :)");
 };
 
 // for preventing multipart import
