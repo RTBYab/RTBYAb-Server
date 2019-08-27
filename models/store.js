@@ -9,14 +9,14 @@ const storeSchema = new mongoose.Schema(
       required: true,
       trim: true,
       minlength: 2,
-      maxlength: 222,
+      maxlength: 20,
       lowercase: true
     },
     description: {
       type: String,
       required: true,
       minlength: 2,
-      maxlength: 1200,
+      maxlength: 150,
       lowercase: true
     },
     storeOwner: {
@@ -40,7 +40,11 @@ const storeSchema = new mongoose.Schema(
       ]
     },
     address: {
-      type: String
+      type: String,
+      minlength: 2,
+      maxlength: 100,
+      lowercase: true,
+      trim: true
       // required: true
     },
     show: {
@@ -48,7 +52,9 @@ const storeSchema = new mongoose.Schema(
       default: true
     },
     photo: String,
+    mobile: String,
     slug: String,
+    tel: String,
     tags: [String],
     private: {
       type: Boolean,

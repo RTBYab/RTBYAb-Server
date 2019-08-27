@@ -6,10 +6,13 @@ const {
   resizePhoto,
   getStore,
   getStoreByStoreOwner,
-  reGenerateToken,
+  powerToUpdateStore,
   searchStore,
   deleteStore,
-  storeFinder
+  storeFinder,
+  storeByOwner,
+  updateStorePhoto,
+  updateStoreDetails
 } = require("../../controllers/store");
 const router = require("express").Router();
 const { userById } = require("../../controllers/user");
@@ -30,16 +33,33 @@ router.post(
 );
 // Get The Store By ID
 router.get("/store/:id", catchErrors(getStore));
-// Update Store
+
+// Update Store Address
 router.put(
-  "/store/updatestore/:userId",
+  "/store/updatestore/:storeId",
   requireSignin,
-  singlePhotoUpload,
-  catchErrors(resizePhoto),
-  createStoreValidator,
-  hasAuthorization,
+  // createStoreValidator,
+  powerToUpdateStore,
   catchErrors(updateStore)
 );
+
+// Upload & Update Store Photo
+router.post(
+  "/store/updatephoto/:storeId",
+  requireSignin,
+  powerToUpdateStore,
+  singlePhotoUpload,
+  catchErrors(resizePhoto),
+  catchErrors(updateStorePhoto)
+);
+// Update Store Dtails
+router.put(
+  "/store/updatedetails/:storeId",
+  requireSignin,
+  powerToUpdateStore,
+  catchErrors(updateStoreDetails)
+);
+
 // Search Store
 router.get("/search", catchErrors(searchStore));
 router.get("/finder", catchErrors(storeFinder));
@@ -55,6 +75,7 @@ router.delete(
 // Get The Store By ID
 router.get("/store/storeOwner/:id", catchErrors(getStoreByStoreOwner));
 
+router.param("storeId", storeByOwner);
 router.param("userId", userById);
 
 module.exports = router;

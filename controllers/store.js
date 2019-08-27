@@ -13,9 +13,9 @@ exports.singlePhotoUpload = multer(multerOptions).single("photo");
 
 // Photo Resizing
 exports.resizePhoto = async (req, res, next) => {
-  const store = await Store.findOne({ storeOwner: req.body.id });
-  if (store)
-    return res.status(400).json({ message: "شما قبلا ثبت نام کرده اید" });
+  // const store = await Store.findOne({ storeOwner: req.body.id });
+  // if (store)
+  //   return res.status(400).json({ message: "شما قبلا ثبت نام کرده اید" });
 
   if (!req.file) return next();
 
@@ -65,22 +65,54 @@ exports.reGenerateToken = expressJwt({
 
 // Update Store
 exports.updateStore = async (req, res) => {
-  req.body.location.type = "Point";
-  req.body.location.coordinates = [27, 23];
-  const id = req.body.id;
-  const store = await Store.findByIdAndUpdate(id, req.body, {
-    new: true,
-    runValidators: true
-  });
-  if (!store)
-    return res.status(404).json({ message: Language.fa.NoStoreFound });
+  const id = req.params.storeId;
+  const body = req.body;
+
+  const store = await Store.findByIdAndUpdate(
+    id,
+    { $set: body },
+    {
+      new: true
+      // runValidators: true
+    }
+  );
+  if (!store) return res.status(404).json({ message: "eeee" });
   res.json(store);
 };
-
 // Get Store By Id
 exports.findStore = async (req, res) => {
   const store = await Store.findById(id);
   if (!store) return res.json({ message: Language.fa.NoStoreFound });
+  res.json(store);
+};
+
+// Upload and Update Store Photo
+exports.updateStorePhoto = async (req, res) => {
+  id = req.params.storeId;
+  const store = await Store.findByIdAndUpdate(
+    id,
+    {
+      $set: { photo: req.body.photo }
+    },
+    { new: true }
+  );
+  if (!store) return res.status(404).json({ message: Language.NoStoreFound });
+  res.json(store.photo);
+};
+
+exports.updateStoreDetails = async (req, res) => {
+  id = req.params.storeId;
+  name = req.body.name;
+  description = req.body.description;
+
+  const store = await Store.findByIdAndUpdate(
+    id,
+    {
+      $set: { name, description }
+    },
+    { new: true }
+  );
+  if (!store) return res.status(404).json({ message: Language.NoStoreFound });
   res.json(store);
 };
 
@@ -105,15 +137,15 @@ exports.hasAuthorization = (req, res, next) => {
   next();
 };
 
-// Power To Act
-exports.powerToAct = (req, res, next) => {
-  const validUser = req.auth._id;
-  const id = req.params.userId;
+// Has Power to Update Securely update Store :)
+exports.powerToUpdateStore = (req, res, next) => {
+  let storeOwner = req.store.storeOwner == req.auth._id;
 
-  const powerToAct = validUser == id;
+  console.log("STOREOWNER", storeOwner);
+  const authorized = storeOwner;
 
-  if (!powerToAct)
-    return res.status(403).json({ message: Language.fa.UnAuthorized });
+  if (!authorized)
+    return res.status(403).json({ error: Language.fa.UnAuthorized });
   next();
 };
 
@@ -128,12 +160,25 @@ exports.getStore = async (req, res) => {
   return res.json(store);
 };
 
+// Get Store By Owner in mobile Store Section
 exports.getStoreByStoreOwner = async (req, res) => {
   const id = req.params.id;
   const store = await Store.findOne({ storeOwner: id }).select("-__v -slug");
   if (!store)
     return res.status(404).json({ message: Language.fa.NoStoreFound });
   return res.json(store);
+};
+
+exports.storeByOwner = async (req, res, next, id) => {
+  const store = await Store.findById(id).exec((err, store) => {
+    if (err || !store) {
+      return res.status(400).json({
+        error: Language.fa.UserNotFound
+      });
+    }
+    req.store = store; // adds store object in req with store info
+    next();
+  });
 };
 
 //searchStore
