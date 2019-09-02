@@ -13,22 +13,33 @@ exports.singlePhotoUpload = multer(multerOptions).single("photo");
 
 // Photo Resizing
 exports.resizePhoto = async (req, res, next) => {
-  // const store = await Store.findOne({ storeOwner: req.body.id });
-  // if (store)
-  //   return res.status(400).json({ message: "شما قبلا ثبت نام کرده اید" });
-
   if (!req.file) return next();
-
   const extension = req.file.mimetype.split("/")[1];
   req.body.photo = `${uuid.v4()}.${extension}`;
   const photo = await jimp.read(req.file.buffer);
   await photo.resize(500, jimp.AUTO);
   await photo.write(
-    `./public/uploads/storeMainImage/${
-      req.auth._id
-    }/${new Date().toISOString()}/${req.body.photo}`
+    `./public/uploads/storeMainImage/${req.auth._id}/${req.body.photo}`
   );
   next();
+};
+
+// Upload and Update Store Photo
+exports.updateStorePhoto = async (req, res) => {
+  id = req.params.storeId;
+  console.log("Buff", req.file.buffer);
+  // const mphoto = req.body.photo;
+  // const final = Buffer.from(mphoto, "base64");
+
+  const store = await Store.findByIdAndUpdate(
+    id,
+    {
+      $set: { photo: req.body.photo }
+    },
+    { new: true }
+  );
+  if (!store) return res.status(404).json({ message: Language.NoStoreFound });
+  res.json(store);
 };
 
 // Create Store
@@ -77,44 +88,6 @@ exports.findStore = async (req, res) => {
   const store = await Store.findById(id);
   if (!store) return res.json({ message: Language.fa.NoStoreFound });
   res.json(store);
-};
-
-// Upload and Update Store Photo
-exports.updateStorePhoto = async (req, res) => {
-  id = req.params.storeId;
-  const store = await Store.findByIdAndUpdate(
-    id,
-    {
-      $set: { photo: req.body.photo }
-    },
-    { new: true }
-  );
-  if (!store) return res.status(404).json({ message: Language.NoStoreFound });
-  res.json(store);
-};
-
-// Test
-exports.updateImage = async (req, res, next) => {
-  let form = new formidable.IncomingForm();
-  form.keepExtensions = true;
-  form.parse(req, (err, fields, files) => {
-    if (err)
-      return res.status(400).json({ error: "Photo could not be uploaded" });
-
-    // save post
-    let post = req.post;
-    post = _.extend(post, fields);
-    post.updated = Date.now();
-
-    if (files.photo) {
-      post.photo.data = fs.readFileSync(files.photo.path);
-      post.photo.contentType = files.photo.type;
-    }
-
-    const result = post.save();
-    if (!result) return res.status(500).json({ message: "Error!!!" });
-    res.json(post);
-  });
 };
 
 exports.updateStoreDetails = async (req, res) => {

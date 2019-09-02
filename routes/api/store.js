@@ -13,7 +13,7 @@ const {
   storeByOwner,
   updateStorePhoto,
   updateStoreDetails,
-  updateImage
+  getStoreProfilePhoto
 } = require("../../controllers/store");
 const router = require("express").Router();
 const { userById } = require("../../controllers/user");
@@ -46,8 +46,8 @@ router.post(
   "/store/updatephoto/:storeId",
   requireSignin,
   powerToUpdateStore,
-  // singlePhotoUpload,
-  catchErrors(updateImage),
+  singlePhotoUpload,
+  catchErrors(resizePhoto),
   catchErrors(updateStorePhoto)
 );
 // Update Store Dtails
@@ -68,6 +68,12 @@ router.delete(
   requireSignin,
   hasAuthorization,
   catchErrors(deleteStore)
+);
+
+// Get Store Profile Store Photo
+router.get(
+  "/store/storeprofilePhoto/:id/:imageId",
+  catchErrors(getStoreProfilePhoto)
 );
 
 // Get The Store By ID

@@ -53,7 +53,7 @@ const storeSchema = new mongoose.Schema(
     },
     photo: {
       data: Buffer,
-      contenType: String
+      contentType: String
     },
     mobile: String,
     slug: String,
