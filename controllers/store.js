@@ -33,7 +33,6 @@ exports.resizePhoto = async (req, res, next) => {
 
 // Create Store
 exports.craeteStore = async (req, res) => {
-  // req.body.location.type = "Point";
   const id = req.params.userId;
 
   const storeExists = await Store.findOne({ storeOwner: id });
@@ -56,12 +55,6 @@ exports.craeteStore = async (req, res) => {
   store.save();
   res.json({ message: Language.fa.StoreHasCreated });
 };
-
-// Re-Generate Token
-exports.reGenerateToken = expressJwt({
-  secret: process.env.JWT_SECRET,
-  userProperty: "auth"
-});
 
 // Update Store
 exports.updateStore = async (req, res) => {
@@ -97,7 +90,31 @@ exports.updateStorePhoto = async (req, res) => {
     { new: true }
   );
   if (!store) return res.status(404).json({ message: Language.NoStoreFound });
-  res.json(store.photo);
+  res.json(store);
+};
+
+// Test
+exports.updateImage = async (req, res, next) => {
+  let form = new formidable.IncomingForm();
+  form.keepExtensions = true;
+  form.parse(req, (err, fields, files) => {
+    if (err)
+      return res.status(400).json({ error: "Photo could not be uploaded" });
+
+    // save post
+    let post = req.post;
+    post = _.extend(post, fields);
+    post.updated = Date.now();
+
+    if (files.photo) {
+      post.photo.data = fs.readFileSync(files.photo.path);
+      post.photo.contentType = files.photo.type;
+    }
+
+    const result = post.save();
+    if (!result) return res.status(500).json({ message: "Error!!!" });
+    res.json(post);
+  });
 };
 
 exports.updateStoreDetails = async (req, res) => {

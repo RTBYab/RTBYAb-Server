@@ -12,7 +12,8 @@ const {
   storeFinder,
   storeByOwner,
   updateStorePhoto,
-  updateStoreDetails
+  updateStoreDetails,
+  updateImage
 } = require("../../controllers/store");
 const router = require("express").Router();
 const { userById } = require("../../controllers/user");
@@ -25,11 +26,8 @@ router.post(
   "/store/createstore/:userId",
   requireSignin,
   hasAuthorization,
-  singlePhotoUpload,
-  catchErrors(resizePhoto),
   // createStoreValidator,
   catchErrors(craeteStore)
-  // reGenerateToken
 );
 // Get The Store By ID
 router.get("/store/:id", catchErrors(getStore));
@@ -48,8 +46,8 @@ router.post(
   "/store/updatephoto/:storeId",
   requireSignin,
   powerToUpdateStore,
-  singlePhotoUpload,
-  catchErrors(resizePhoto),
+  // singlePhotoUpload,
+  catchErrors(updateImage),
   catchErrors(updateStorePhoto)
 );
 // Update Store Dtails

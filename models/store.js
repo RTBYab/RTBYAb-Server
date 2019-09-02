@@ -1,6 +1,6 @@
+const slug = require("slugs");
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema;
-const slug = require("slugs");
 
 const storeSchema = new mongoose.Schema(
   {
@@ -51,7 +51,10 @@ const storeSchema = new mongoose.Schema(
       type: Boolean,
       default: true
     },
-    photo: String,
+    photo: {
+      data: Buffer,
+      contenType: String
+    },
     mobile: String,
     slug: String,
     tel: String,
