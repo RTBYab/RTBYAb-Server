@@ -4,7 +4,6 @@ const jimp = require("jimp");
 const multer = require("multer");
 const User = require("../models/user");
 const Store = require("../models/Store");
-const expressJwt = require("express-jwt");
 const Language = require("../helpers/Language");
 const { multerOptions } = require("../helpers/Config");
 
@@ -17,9 +16,27 @@ exports.resizePhoto = async (req, res, next) => {
   const extension = req.file.mimetype.split("/")[1];
   req.body.photo = `${uuid.v4()}.${extension}`;
   const photo = await jimp.read(req.file.buffer);
+  await jimp.HORIZONTAL_ALIGN_CENTER;
   await photo.resize(500, jimp.AUTO);
+  await photo.quality(30);
   await photo.write(
     `./public/uploads/storeMainImage/${req.auth._id}/${req.body.photo}`
+  );
+  next();
+};
+
+// for preventing multipart import
+// Post Single photo upload handler
+exports.postResizePhoto = async (req, res, next) => {
+  if (!req.file) return next();
+  const extension = req.file.mimetype.split("/")[1];
+  req.body.photo = `${uuid.v4()}.${extension}`;
+  const photo = await jimp.read(req.file.buffer);
+  await jimp.HORIZONTAL_ALIGN_CENTER;
+  await photo.resize(500, jimp.AUTO);
+  await photo.quality(30);
+  await photo.write(
+    `./public/uploads/postImages/${req.auth._id}/${req.body.photo}`
   );
   next();
 };
@@ -27,10 +44,6 @@ exports.resizePhoto = async (req, res, next) => {
 // Upload and Update Store Photo
 exports.updateStorePhoto = async (req, res) => {
   id = req.params.storeId;
-  console.log("Buff", req.file.buffer);
-  // const mphoto = req.body.photo;
-  // const final = Buffer.from(mphoto, "base64");
-
   const store = await Store.findByIdAndUpdate(
     id,
     {
@@ -150,7 +163,7 @@ exports.getStore = async (req, res) => {
   return res.json(store);
 };
 
-// Get Store By Owner in mobile Store Section
+// Get Store By Owner in mobile Store Section(Front_End Section)
 exports.getStoreByStoreOwner = async (req, res) => {
   const id = req.params.id;
   const store = await Store.findOne({ storeOwner: id }).select("-__v -slug");
@@ -248,22 +261,6 @@ exports.searchStore = async (req, res) => {
 
 exports.storeFinder = async (req, res) => {
   res.json("Hi :)");
-};
-
-// for preventing multipart import
-// Post Single photo upload handler
-exports.postResizePhoto = async (req, res, next) => {
-  if (!req.file) return next();
-  const extension = req.file.mimetype.split("/")[1];
-  req.body.photo = `${uuid.v4()}.${extension}`;
-  const photo = await jimp.read(req.file.buffer);
-  await photo.resize(500, jimp.AUTO);
-  await photo.write(
-    `./public/uploads/postImages/${req.auth._id}/${new Date().toISOString()}/${
-      req.body.photo
-    }`
-  );
-  next();
 };
 
 // Delete Store

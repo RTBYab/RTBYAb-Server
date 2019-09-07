@@ -62,7 +62,21 @@ const storeSchema = new mongoose.Schema(
     private: {
       type: Boolean,
       default: false
-    }
+    },
+    following: [{ type: ObjectId, ref: "User" }],
+    followers: [{ type: ObjectId, ref: "User" }],
+    rate: {
+      type: Number,
+      min: 0,
+      max: 5
+    },
+    comments: [
+      {
+        text: String,
+        created: { type: Date, default: Date.now },
+        commentedBy: { type: ObjectId, ref: "User" }
+      }
+    ]
   },
   {
     toJSON: { virtuals: true },

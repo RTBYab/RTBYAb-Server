@@ -5,16 +5,16 @@ const postSchema = new mongoose.Schema({
   title: {
     type: String,
     trim: true,
-    required: true,
-    minlength: 2,
-    maxlength: 222
+    // required: true,
+    // minlength: 2,
+    maxlength: 20
   },
   body: {
     type: String,
     trim: true,
-    required: true,
-    minlength: 2,
-    maxlength: 1200
+    // required: true,
+    // minlength: 2,
+    maxlength: 150
   },
   photo: String,
 
@@ -39,7 +39,8 @@ const postSchema = new mongoose.Schema({
     {
       text: { type: String },
       created: { type: Date, default: Date.now },
-      commentedBy: { type: ObjectId, ref: "User" }
+      commentedBy: { type: ObjectId, ref: "User" },
+      rate: { type: Number, default: 0 }
     }
   ]
 });
