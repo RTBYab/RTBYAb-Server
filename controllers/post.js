@@ -52,6 +52,7 @@ exports.getPosts = (req, res) => {
 
 exports.createPost = async (req, res, next) => {
   const post = await new Post(req.body);
+  post.postedBy = req.profile._id;
   post.save();
   res.json(post);
 };
@@ -225,6 +226,13 @@ exports.updateComment = async (req, res) => {
 
   res.json({ message: Language.fa.CommentUpdated });
 };
+
+// Get store's Post
+
+// exports.getStorePosts = (req, res) => {
+//   const id = req.params.id;
+//   const posts = await
+// };
 
 // Power To Act
 exports.powerToAct = (req, res, next) => {

@@ -13,7 +13,8 @@ const {
   powerToAct,
   singlePost,
   postsByUser,
-  updateComment
+  updateComment,
+  getStorePosts
   // findPosts
 } = require("../../controllers/post.js");
 const {
@@ -30,6 +31,8 @@ const router = express.Router();
 // Post Router has Begun :)
 
 router.get("/posts", getPosts);
+
+router.get("/posts/:id", catchErrors(getStorePosts));
 
 // Like/Unlike
 router.put("/post/like/:userId", requireSignin, powerToAct, like);
