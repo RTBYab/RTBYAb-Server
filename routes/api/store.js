@@ -7,6 +7,8 @@ const {
   deleteStore,
   storeFinder,
   storeByOwner,
+  deleteComment,
+  createComment,
   hasAuthorization,
   updateStorePhoto,
   singlePhotoUpload,
@@ -31,6 +33,21 @@ router.post(
 );
 // Get The Store By ID
 router.get("/store/:id", catchErrors(getStore));
+
+// Create Comment
+router.post(
+  "/store/createcomment/:id/:userId",
+  requireSignin,
+  catchErrors(createComment)
+);
+
+// Delete Comment
+router.delete(
+  "/store/deleteComment/:storeId/:commentId",
+  requireSignin,
+  // hasAuthorization,
+  catchErrors(deleteComment)
+);
 
 // Update Store Address
 router.put(

@@ -80,6 +80,96 @@ exports.craeteStore = async (req, res) => {
   res.json({ message: Language.fa.StoreHasCreated });
 };
 
+// Create Comment
+exports.createComment = async (req, res) => {
+  const id = req.params.id;
+  const rate = req.body.rate;
+  const comment = req.body.comment;
+  const commentedBy = req.auth._id;
+  const commentOwner = req.profile.name;
+
+  const store = await Store.findByIdAndUpdate(
+    id,
+    {
+      $push: {
+        comments: {
+          rate,
+          commentedBy,
+          commentOwner,
+          type: "Text",
+          text: comment
+        }
+      }
+    },
+    { new: true }
+  )
+    .populate("user", "_id name")
+    .populate("postedBy", "_id name");
+
+  if (!store) res.status(404).json({ message: Language.fa.NoStoreFound });
+  res.json(store.comments);
+};
+
+// Delete Comment
+// exports.deleteComment = async(req,res) => {
+//   const id
+// }
+
+// Get Specific Comment
+exports.deleteComment = async (req, res) => {
+  const sId = req.params.storeId;
+  const cId = req.params.commentId;
+
+  const store = await Store.findById(sId);
+  if (!store) return res.json(404).json({ message: Language.fa.NoStoreFound });
+
+  // Pull out the comment
+  const comment = store.comments.find(
+    comment => comment.id === req.params.commentId
+  );
+  if (!comment)
+    return res.status(404).json({ message: Language.fa.NoCommentFound });
+
+  if (comment.commentedBy.toString() !== req.auth._id)
+    return res.json({ message: Language.fa.UnAuthorized });
+
+  const removeIndex = await store.comments
+    .map(comment => comment.id)
+    .indexOf(cId);
+
+  await store.comments.splice(removeIndex, 1);
+  await store.save();
+  res.json(comment);
+};
+
+// Update Comment
+// Not Created it's route yet  :((((((((( :)))))))))
+exports.updateComment = async (req, res) => {
+  const commentId = req.body.id;
+  const comment = req.body.comment;
+  const postId = req.params.id;
+
+  const post = await Post.findById(postId);
+  if (!post) return res.status(404).json({ message: Language.fa.NoPostFound });
+
+  const com = post.comments.map(comment => comment.id).indexOf(commentId);
+  const singleComment = post.comments.splice(com, 1);
+  let authorized = singleComment[0].commentedBy;
+  console.log("Security Check Passed ?", req.auth._id == authorized);
+
+  if (authorized != req.auth._id)
+    return res.status(401).json({ mesage: Language.fa.UnAuthorized });
+
+  const updatedComment = await Post.updateOne(
+    { comments: { $elemMatch: { _id: commentId } } },
+    { $set: { "comments.$.text": comment } }
+  );
+  if (!updatedComment)
+    return res.status(404).json({ message: Language.fa.NoPostFound });
+
+  res.json({ message: Language.fa.CommentUpdated });
+};
+
 // Update Store
 exports.updateStore = async (req, res) => {
   const id = req.params.storeId;
@@ -226,6 +316,8 @@ exports.storeByOwner = async (req, res, next, id) => {
 
 //   res.json(store);
 // };
+
+// Store Average Rate
 
 exports.searchStore = async (req, res) => {
   const coordinates = [req.body.lng, req.body.lat].map(parseFloat);

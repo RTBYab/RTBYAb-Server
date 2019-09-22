@@ -1,10 +1,10 @@
-const Post = require("../models/post");
-const User = require("../models/user");
-const formidable = require("formidable");
 const fs = require("fs");
 const _ = require("lodash");
-const Language = require("../helpers/Language");
+const User = require("../models/user");
+const Post = require("../models/post");
+const formidable = require("formidable");
 const cons = require("../helpers/Constants");
+const Language = require("../helpers/Language");
 
 exports.postById = (req, res, next, id) => {
   Post.findById(id)
@@ -228,11 +228,12 @@ exports.updateComment = async (req, res) => {
 };
 
 // Get store's Post
-
-// exports.getStorePosts = (req, res) => {
-//   const id = req.params.id;
-//   const posts = await
-// };
+exports.getStorePosts = async (req, res) => {
+  const id = req.params.id;
+  const post = await Post.find({ postedBy: id }).sort({ created: -1 });
+  if (!post) return res.status(404).json({ message: Language.NoPostFound });
+  res.json(post);
+};
 
 // Power To Act
 exports.powerToAct = (req, res, next) => {

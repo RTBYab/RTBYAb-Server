@@ -72,9 +72,11 @@ const storeSchema = new mongoose.Schema(
     },
     comments: [
       {
-        text: String,
+        text: { type: String },
         created: { type: Date, default: Date.now },
-        commentedBy: { type: ObjectId, ref: "User" }
+        commentedBy: { type: ObjectId, ref: "User" },
+        rate: { type: Number, default: 0, min: 0, max: 5 },
+        commentOwner: { type: String }
       }
     ]
   },
