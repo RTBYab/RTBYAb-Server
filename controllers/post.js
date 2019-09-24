@@ -108,16 +108,24 @@ exports.updatePost = async (req, res, next) => {
   });
 };
 
+// Delete Post
+// exports.deletePost = async (req, res) => {
+//   let post = req.post;
+//   await post.remove((err, post) => {
+//     if (!post)
+//       return res.status(404).json({ message: Language.fa.NoPostFound });
+//     if (err) return res.status(400).json({ error: err.message });
+//     res.json({
+//       message: "Post deleted successfully"
+//     });
+//   });
+// };
+
 exports.deletePost = async (req, res) => {
-  let post = req.post;
-  await post.remove((err, post) => {
-    if (!post)
-      return res.status(404).json({ message: Language.fa.NoPostFound });
-    if (err) return res.status(400).json({ error: err.message });
-    res.json({
-      message: "Post deleted successfully"
-    });
-  });
+  const id = req.params.postId;
+  const post = await Post.findByIdAndRemove(id);
+  if (!post) return res.status(404).json({ message: Language.fa.NoPostFound });
+  res.json({ message: "Post Deleted " });
 };
 
 exports.photo = (req, res, next) => {
