@@ -22,20 +22,8 @@ const {
 const { requireSignin } = require("../../controllers/auth");
 
 // Following/Follower
-router.put(
-  "/user/follow",
-  requireSignin,
-  powerToAct,
-  addFollowing,
-  addFollower
-);
-router.put(
-  "/user/unfollow",
-  requireSignin,
-  powerToAct,
-  removeFollowing,
-  removeFollower
-);
+router.post("/user/follow", requireSignin, addFollowing, addFollower);
+router.post("/user/unfollow", requireSignin, removeFollowing, removeFollower);
 
 router.get("/users", allUsers);
 // Get UserBY Id

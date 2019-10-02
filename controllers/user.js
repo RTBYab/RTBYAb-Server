@@ -101,7 +101,7 @@ exports.addFollowing = async (req, res, next) => {
   const { followId, userId } = req.body;
 
   const user = await User.findByIdAndUpdate(userId, {
-    $push: { following: followId }
+    $addToSet: { following: followId }
   });
   if (!user) return res.status(404).json({ message: Language.fa.UserNotFound });
   next();
@@ -115,7 +115,7 @@ exports.addFollower = async (req, res) => {
 
   const user = await User.findByIdAndUpdate(
     followId,
-    { $push: { followers: userId } },
+    { $addToSet: { followers: userId } },
     { new: true }
   )
     .populate("following", "_id name")
