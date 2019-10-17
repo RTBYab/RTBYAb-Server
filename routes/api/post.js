@@ -58,7 +58,14 @@ router.post(
 
 router.get("/posts/by/:userId", requireSignin, postsByUser);
 router.get("/post/:postId", singlePost);
-router.put("/post/:postId", requireSignin, isPoster, updatePost);
+router.put(
+  "/post/:postId",
+  requireSignin,
+  isPoster,
+  singlePhotoUpload,
+  catchErrors(postResizePhoto),
+  updatePost
+);
 
 // Delete Post
 router.delete("/posts/:postId", requireSignin, isPoster, deletePost);

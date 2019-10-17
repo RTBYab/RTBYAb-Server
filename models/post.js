@@ -4,17 +4,17 @@ const { ObjectId } = mongoose.Schema;
 const postSchema = new mongoose.Schema({
   title: {
     type: String,
-    trim: true,
+    trim: true
     // required: true,
     // minlength: 2,
-    maxlength: 20
+    // maxlength: 20
   },
   body: {
     type: String,
-    trim: true,
+    trim: true
     // required: true,
     // minlength: 2,
-    maxlength: 150
+    // maxlength: 150
   },
   photo: String,
 

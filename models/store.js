@@ -73,6 +73,7 @@ const storeSchema = new mongoose.Schema(
     comments: [
       {
         text: { type: String },
+        likedBy: { type: ObjectId, ref: "User" },
         created: { type: Date, default: Date.now },
         commentedBy: { type: ObjectId, ref: "User" },
         rate: { type: Number, default: 0, min: 0, max: 5 },
