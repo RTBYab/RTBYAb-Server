@@ -3,11 +3,14 @@ const {
   craeteStore,
   updateStore,
   resizePhoto,
+  likeComment,
   searchStore,
   deleteStore,
   storeFinder,
   storeByOwner,
+  unLikeComment,
   deleteComment,
+  updateComment,
   createComment,
   hasAuthorization,
   updateStorePhoto,
@@ -41,9 +44,18 @@ router.post(
   catchErrors(createComment)
 );
 
+// updateComment
+router.put("/store/updatecomment/:id", requireSignin, updateComment);
+
+// like Comment
+router.post("/store/likecomment/:id", requireSignin, likeComment);
+
+// unlike Comment
+router.post("/store/unlikecomment/:id", requireSignin, unLikeComment);
+
 // Delete Comment
 router.delete(
-  "/store/deleteComment/:storeId/:commentId",
+  "/store/deletecomment/:storeId/:commentId",
   requireSignin,
   // hasAuthorization,
   catchErrors(deleteComment)

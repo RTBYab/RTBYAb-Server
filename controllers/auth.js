@@ -36,7 +36,13 @@ exports.signin = async (req, res) => {
     }
     // generate a token with user id and secret
     const token = jwt.sign(
-      { _id: user._id, role: user.role, iss: "RTBYAB", exp: 1200000000000 },
+      {
+        _id: user._id,
+        role: user.role,
+        name: user.name,
+        iss: "RTBYAB",
+        exp: 1200000000000
+      },
       process.env.JWT_SECRET
     );
     // persist the token as 't' in cookie with expiry date
@@ -88,12 +94,8 @@ exports.forgotPassword = async (req, res) => {
       from: "noreply@rtbyab.com",
       to: email,
       subject: Language.fa.EmailSubject,
-      text: `Please use the following link to reset your password: ${
-        process.env.CLIENT_URL
-      }/reset-password/${token}`,
-      html: `<p>Please use the following link to reset your password:</p> <p>${
-        process.env.CLIENT_URL
-      }/reset-password/${token}</p>`
+      text: `Please use the following link to reset your password: ${process.env.CLIENT_URL}/reset-password/${token}`,
+      html: `<p>Please use the following link to reset your password:</p> <p>${process.env.CLIENT_URL}/reset-password/${token}</p>`
     };
 
     return user.updateOne(

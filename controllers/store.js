@@ -25,6 +25,58 @@ exports.resizePhoto = async (req, res, next) => {
   next();
 };
 
+exports.likeComment = async (req, res) => {
+  const user = req.auth._id;
+  const idstore = req.params.id;
+  const commentId = req.body.commentId;
+
+  const store = await Store.findById(idstore);
+  if (!store)
+    return res.status(404).json({ message: Language.fa.NoStoreFound });
+
+  const comment = store.comments.map(com => com.id).indexOf(commentId);
+  // const singleComment = store.comments.splice(comment, 1);
+  const updateComment = await Store.updateOne(
+    {
+      comments: { $elemMatch: { _id: commentId } }
+    },
+    { $addToSet: { "comments.$.likedBy": user } },
+    { new: true }
+  );
+  console.log(comment, updateComment, user);
+
+  if (!updateComment)
+    return res.status(404).json({ message: Language.fa.NoCommentFound });
+
+  res.json(store.comments);
+};
+
+exports.unLikeComment = async (req, res) => {
+  const user = req.auth._id;
+  const idstore = req.params.id;
+  const commentId = req.body.commentId;
+
+  const store = await Store.findById(idstore);
+  if (!store)
+    return res.status(404).json({ message: Language.fa.NoStoreFound });
+
+  const comment = store.comments.map(com => com.id).indexOf(commentId);
+  // const singleComment = store.comments.splice(comment, 1);
+  const updateComment = await Store.updateOne(
+    {
+      comments: { $elemMatch: { _id: commentId } }
+    },
+    { $pull: { "comments.$.likedBy": user } },
+    { new: true }
+  );
+  console.log(comment, updateComment, user);
+
+  if (!updateComment)
+    return res.status(404).json({ message: Language.fa.NoCommentFound });
+
+  res.json(store.comments);
+};
+
 // for preventing multipart import
 // Post Single photo upload handler
 exports.postResizePhoto = async (req, res, next) => {
@@ -86,7 +138,7 @@ exports.createComment = async (req, res) => {
   const rate = req.body.rate;
   const comment = req.body.comment;
   const commentedBy = req.auth._id;
-  const commentOwner = req.profile.name;
+  const commentOwner = req.auth.name;
 
   const store = await Store.findByIdAndUpdate(
     id,
@@ -124,26 +176,39 @@ exports.deleteComment = async (req, res) => {
   if (!store) return res.json(404).json({ message: Language.fa.NoStoreFound });
 
   // Pull out the comment
-  const comment = store.comments.find(
+  const comment = await store.comments.find(
     comment => comment.id === req.params.commentId
+    // console.log(req.auth._id === comment.id, "ooo")
   );
+  console.log(req.auth);
+
   if (!comment)
     return res.status(404).json({ message: Language.fa.NoCommentFound });
-
-  if (comment.commentedBy.toString() !== req.auth._id)
-    return res.json({ message: Language.fa.UnAuthorized });
 
   const removeIndex = await store.comments
     .map(comment => comment.id)
     .indexOf(cId);
 
-  await store.comments.splice(removeIndex, 1);
+  const singleComment = store.comments.splice(removeIndex, 1);
+  let authorized = singleComment[0].commentedBy;
+  console.log(
+    "Security Check Passed ?",
+    req.auth._id == authorized,
+    "req.auth._id",
+    req.auth._id,
+    "commentId",
+    authorized
+  );
+
+  if (authorized != req.auth._id)
+    return res.status(401).json({ mesage: Language.fa.UnAuthorized });
+
+  await store.comments.splice(removeIndex, 0);
   await store.save();
   res.json(comment);
 };
 
 // Update Comment
-// Not Created it's route yet  :((((((((( :)))))))))
 exports.updateComment = async (req, res) => {
   const commentId = req.body.id;
   const comment = req.body.comment;
