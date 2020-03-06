@@ -43,12 +43,10 @@ exports.likeComment = async (req, res) => {
     { $addToSet: { "comments.$.likedBy": user } },
     { new: true }
   );
-  console.log(comment, updateComment, user);
-
   if (!updateComment)
     return res.status(404).json({ message: Language.fa.NoCommentFound });
 
-  res.json(store.comments);
+  res.json(store);
 };
 
 exports.unLikeComment = async (req, res) => {
@@ -74,7 +72,7 @@ exports.unLikeComment = async (req, res) => {
   if (!updateComment)
     return res.status(404).json({ message: Language.fa.NoCommentFound });
 
-  res.json(store.comments);
+  res.json(store);
 };
 
 // for preventing multipart import
@@ -156,7 +154,37 @@ exports.createComment = async (req, res) => {
     { new: true }
   )
     .populate("user", "_id name")
-    .populate("postedBy", "_id name");
+    .populate("postedBy", "_id name ");
+
+  if (!store) res.status(404).json({ message: Language.fa.NoStoreFound });
+  res.json(store.comments);
+};
+
+// Edit Comment
+exports.editComment = async (req, res) => {
+  const id = req.params.id;
+  const rate = req.body.rate;
+  const comment = req.body.comment;
+  const commentedBy = req.auth._id;
+  const commentOwner = req.auth.name;
+
+  const store = await Store.findByIdAndUpdate(
+    id,
+    {
+      $set: {
+        comments: {
+          rate,
+          commentedBy,
+          commentOwner,
+          type: "Text",
+          text: comment
+        }
+      }
+    },
+    { new: true }
+  )
+    .populate("user", "_id name")
+    .populate("postedBy", "_id name ");
 
   if (!store) res.status(404).json({ message: Language.fa.NoStoreFound });
   res.json(store.comments);
@@ -310,9 +338,9 @@ exports.powerToUpdateStore = (req, res, next) => {
 // Get Store ById
 exports.getStore = async (req, res) => {
   const id = req.params.id;
-  const store = await Store.findById(id)
-    .select("-__v -slug")
-    .populate("author review");
+  const store = await Store.findById(id).select("-__v -slug");
+  // .populate("author review photo");çç
+
   if (!store)
     return res.status(404).json({ message: Language.fa.NoStoreFound });
   return res.json(store);

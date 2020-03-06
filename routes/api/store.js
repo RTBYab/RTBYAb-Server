@@ -4,6 +4,7 @@ const {
   updateStore,
   resizePhoto,
   likeComment,
+  editComment,
   searchStore,
   deleteStore,
   storeFinder,
@@ -43,6 +44,12 @@ router.post(
   requireSignin,
   catchErrors(createComment)
 );
+
+// // Edit Comment
+// router.put(
+//   "/store/editcomment/:id/:userId",
+//   requireSignin.catchErrors(editComment)
+// );
 
 // updateComment
 router.put("/store/updatecomment/:id", requireSignin, updateComment);

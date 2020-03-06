@@ -17,7 +17,7 @@ const router = express.Router();
 const { userById } = require("../../controllers/user");
 const { catchErrors } = require("../../helpers/Errors.js");
 
-// import password reset validator
+// TODO: import password reset validator
 
 router.post("/signup", userSignupValidator, catchErrors(signup));
 router.post("/signin", userSigninValidator, catchErrors(signin));

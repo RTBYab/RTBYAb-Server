@@ -54,7 +54,7 @@ exports.signin = async (req, res) => {
 };
 exports.getById = async (req, res) => {
   const user = await User.findById(req.params.id).select(
-    "name email role report follower following store"
+    "-password -resetPasswordLink -salt -hashed_password -comments -createdAt -created -updatedAt -__v"
   );
   if (!user) res.status(404).json({ message: Language.fa.UserNotFound });
   res.json(user);
