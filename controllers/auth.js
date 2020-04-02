@@ -1,4 +1,5 @@
 const Language = require("../helpers//Language");
+const TrezSmsClient = require("trez-sms-client");
 const { sendEmail } = require("../helpers");
 const expressJwt = require("express-jwt");
 const User = require("../models/user");
@@ -179,4 +180,23 @@ exports.socialLogin = (req, res) => {
       return res.json({ token, user: { _id, name, email } });
     }
   });
+};
+
+// Signup By Phone
+exports.signupByPhoneNumber = async (req, res) => {
+  const client = new TrezSmsClient("appnico", "QkPFXMc@bpG6rH8");
+  const code = await client.autoSendCode(
+    req.body.mobile,
+    "آپ نیکو، بهترین کالا و خدمات در اطراف شما"
+  );
+  return res.status(200).json({ message: `verification code is ${code}` });
+};
+
+exports.validateCode = async (req, res) => {
+  const client = new TrezSmsClient("appnico", "QkPFXMc@bpG6rH8");
+
+  const mobile = req.body.mobile;
+  const code = req.body.code;
+  const codeVerification = await client.checkCode(mobile, code);
+  res.send(codeVerification);
 };

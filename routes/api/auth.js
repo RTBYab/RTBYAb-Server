@@ -3,9 +3,11 @@ const {
   signin,
   signout,
   getById,
-  forgotPassword,
+  socialLogin,
+  validateCode,
   resetPassword,
-  socialLogin
+  forgotPassword,
+  signupByPhoneNumber
 } = require("../../controllers/auth");
 const {
   userSignupValidator,
@@ -34,6 +36,9 @@ router.put(
   passwordResetValidator,
   catchErrors(resetPassword)
 );
+
+router.post("/mobile", catchErrors(signupByPhoneNumber));
+router.post("/mobile/verification", catchErrors(validateCode));
 
 // then use this route for social login
 router.post("/social-login", socialLogin);

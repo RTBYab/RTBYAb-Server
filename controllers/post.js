@@ -71,6 +71,7 @@ exports.postsByUser = (req, res) => {
 };
 
 exports.isPoster = (req, res, next) => {
+  console.log(req.auth._id, "ooooisis");
   let sameUser = req.post && req.auth && req.post.postedBy._id == req.auth._id;
   let adminUser = req.post && req.auth && req.auth.role === "admin";
   console.log("req.post", req.post);
@@ -86,26 +87,18 @@ exports.isPoster = (req, res, next) => {
 };
 
 exports.updatePost = async (req, res, next) => {
-  let form = new formidable.IncomingForm();
-  form.keepExtensions = true;
-  form.parse(req, (err, fields, files) => {
-    if (err)
-      return res.status(400).json({ error: "Photo could not be uploaded" });
+  const id = req.params.postId;
 
-    // save post
-    let post = req.post;
-    post = _.extend(post, fields);
-    post.updated = Date.now();
-
-    if (files.photo) {
-      post.photo.data = fs.readFileSync(files.photo.path);
-      post.photo.contentType = files.photo.type;
-    }
-
-    const result = post.save();
-    if (!result) return res.status(500).json({ message: "Error!!!" });
-    res.json(post);
-  });
+  const post = await Post.findByIdAndUpdate(
+    id,
+    { $set: req.body },
+    { $new: true }
+  );
+  if (!post) {
+    return res.status(404).json({ msg: "پستی پیدا نشد" });
+  }
+  await post.save();
+  res.send(post);
 };
 
 // Delete Post

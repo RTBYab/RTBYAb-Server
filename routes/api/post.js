@@ -58,6 +58,8 @@ router.post(
 
 router.get("/posts/by/:userId", requireSignin, postsByUser);
 router.get("/post/:postId", singlePost);
+
+// Update Post
 router.put(
   "/post/:postId",
   requireSignin,
